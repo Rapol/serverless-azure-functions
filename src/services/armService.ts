@@ -42,7 +42,7 @@ export class ArmService extends BaseService {
     const mergedTemplate = template.getTemplate(this.config);
     let parameters = template.getParameters(this.config);
 
-    if (this.config.provider.apim) {
+    if (this.config.provider.apim && !this.config.provider.apim.skipArmTemplate) {
       const apimTemplate = apimResource.getTemplate();
       const apimParameters = apimResource.getParameters(this.config);
 
