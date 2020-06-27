@@ -89,6 +89,19 @@ describe("Arm Service", () => {
       expect(deployment.template.resources.find((resource) => resource.type === "Microsoft.ApiManagement/service")).not.toBeNull();
     });
 
+    it("Creates a custom ARM template that skips APIM template deployment from well-known type", async () => {
+      sls.service.provider["apim"] = MockFactory.createTestApimConfig();
+      sls.service.provider.runtime = Runtime.NODE10;
+      sls.service.provider["apim"].skipArmTemplate = true;
+      const deployment = await service.createDeploymentFromType(ArmTemplateType.Premium);
+
+      expect(deployment).not.toBeNull();
+      expect(Object.keys(deployment.parameters).length).toBeGreaterThan(0);
+      expect(deployment.template.resources.length).toBeGreaterThan(0);
+
+      expect(deployment.template.resources.find((resource) => resource.type === "Microsoft.ApiManagement/service")).toBeUndefined();
+    });
+
     it("throws error when specified type is not found", async () => {
       await expect(service.createDeploymentFromType("not-found")).rejects.not.toBeNull();
     });
